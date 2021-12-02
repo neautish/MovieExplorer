@@ -4,9 +4,13 @@
     box-sizing: border-box;
 }
 
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, small {
+    font-family: Arial, Helvetica, sans-serif;
+}
 body {
     background-color: #eee;
-    font-family: Arial, Helvetica, sans-serif;
 }
 
 .header {
@@ -57,9 +61,19 @@ body {
 }
 .movie-card__top-quality {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     bottom: 1rem;
     left: 1rem;
+}
+.movie-card__top-quality-item {
+    margin: .2rem 0;
+    background-color: orange;
     color: #fff;
+    padding: .2rem .3rem;
+    font-size: .7rem;
+    font-weight: 600;
+    border-radius: 5px;
 }
 .movie-card__top-summary {
     position: absolute;
@@ -108,10 +122,11 @@ body {
     min-width: 300px;
     height: 50px;
     border-radius: 5px;
-    border: 0;
-    box-shadow: 0 0 3px 3px #ddd;
+    border: 1px solid #bbb;
+    /* box-shadow: 0 0 3px 3px #ddd; */
     text-align: left;
     padding: .5rem 1rem;
+    outline: none;
 }
 
 .inputSection {

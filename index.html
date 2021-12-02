@@ -7,18 +7,18 @@
     <link rel="stylesheet" href="styles/styles.css">
     <script src="scripts/axios.min.js" defer></script>
     <script src="scripts/scripts.js" defer></script>
-    <title>Movie Test</title>
+    <title>Movie Explorer</title>
 </head>
 <body>
     <header class="header">
         <nav class="main-nav">
-            <h1 class="site-logo">Movie Finder</h1>
+            <h1 class="site-logo">Movie Explorer</h1>
         </nav>
         <section class="search-section">
             <form action="#" id="searchForm" onsubmit="onFormSubmitHandler" autocomplete="off">
                 <div class="inputSection">
                     <label for="SearchInput" style="display: none;"></label>
-                <input type="search" onchange="inputOnChangeHandler" id="SearchInput" placeholder="please enter your query" autocomplete>
+                <input type="search" onchange="inputOnChangeHandler" id="SearchInput" placeholder="Find your movie ..." autocomplete>
                 <div class="spinner" id="spinner"></div>
                 </div>
             </form>
