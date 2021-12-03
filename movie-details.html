@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/axios.min.js" defer></script>
+    <script src="scripts/scripts.js" defer></script>
+    <title>MovieExplorer-MovieDetails</title>
+</head>
+<body>
+    <header class="header">
+        <nav class="main-nav">
+            <h1 class="site-logo">MovieExplorer</h1>
+        </nav>
+        <section class="search-section">
+            <form action="#" id="searchForm" onsubmit="onFormSubmitHandler" autocomplete="off">
+                <div class="inputSection">
+                    <label for="SearchInput" style="display: none;"></label>
+                <input type="search" onchange="inputOnChangeHandler" id="SearchInput" placeholder="Find your movie ..." autocomplete>
+                <div class="spinner" id="spinner"></div>
+                </div>
+            </form>
+            <div class="results-preview" id="resultsPreview"></div>
+        </section>
+    </header>
+    <main>
+        <div class="movie">
+            <img src="images/ironman1.jpg" alt="ironman">
+            <div class="movie__details">
+                <h3 class="movie__details-name">iron man 2</h3>
+                <div class="movie__details-scores">
+                    <span class="imdb-score">IMDB: 8.4</span>
+                </div>
+                <div class="movie__details-genres"> Genres: 
+                    <small class="genre">horror</small>
+                    <small class="genre">horror</small>
+                    <small class="genre">horror</small>
+                    <small class="genre">horror</small>
+                </div>
+                <div class="movie__details-qualities"> Available in: 
+                    <small class="quality">Blu 1080</small>
+                    <small class="quality">Blu 2160</small>
+                    <small class="quality">Blu 720</small>
+                    <small class="quality">3D</small>
+                    <small class="quality">web 1080p</small>
+                    <small class="quality">web 720p</small>
+                </div>
+                <div class="movie__details-language"> Language: 
+                    <span>en</span>
+                </div>
+                <div class="movie__details-summary">Sumary: 
+                    <p class="summary">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi id sunt blanditiis cumque! Qui saepe eius veniam ut cum distinctio sit beatae voluptates, itaque aliquam fuga maxime iure earum ipsum.</p>
+                </div>
+            </div>
+        </div>
+        <div class="movie">
+            <h4>Casts:</h4>
+            <div class="movie-casts">
+                <div class="cast">
+                    <div class="cast-name-container">
+                        <span class="cast-name">robbert downy junnior <br> as <br> iron man</span>
+                    </div>
+                    <img src="images/ironman1.jpg" alt="cast">
+                </div>
+            </div>
+        </div>
+        <div class="spinner-large" id="spinnerLarge"></div>
+    </main>
+
+</body>
+</html>
