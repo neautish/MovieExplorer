@@ -4,6 +4,7 @@ const resultsPreview = document.querySelector('#resultsPreview');
 const searchForm = document.querySelector('#searchForm');
 const spinner = document.querySelector('#spinner');
 const spinnerLarge = document.querySelector('#spinnerLarge');
+const main = document.querySelector('main');
 
 
 const spinnerNone = () => {
@@ -34,69 +35,88 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
             // handle success
             const movie = response.data.data.movie;
             console.log(movie)
-            movie.map(movie => {
-                // console.log(movie.torrents)
-                let quality2160;
-                let quality1080;
-                let quality720;
-                let quality3D;
-                movie.torrents.map(item => {
-                    // console.log(item.quality)
-                    if (item.quality === "2160p") {
-                        quality2160 = `<span class="movie-card__top-quality-item">2160p</span>`
-                    }
-                    if (item.quality === "1080p") {
-                        quality1080 = `<span class="movie-card__top-quality-item">1080p</span>`
-                    }
-                    if (item.quality === "720p") {
-                        quality720 = `<span class="movie-card__top-quality-item">720p</span>`
-                    }
-                    if (item.quality === "3D") {
-                        quality3D = `<span class="movie-card__top-quality-item">3D</span>`
-                    }
-                })
 
-                let poster = 'images/ironman1.jpg'
-                if (movie.large_cover_image) {
-                    poster = movie.large_cover_image
-                } else if (movie.medium_cover_image) {
-                    poster = movie.medium_cover_image
-                } else if (movie.small_cover_image) {
-                    poster = movie.small_cover_image
-                } else {
-                    poster = 'images/ironman1.jpg'
-                }
-
-                let rateColor
-                if (parseFloat(movie.rating) >= 7) {
-                    rateColor = "green"
-                } else if (parseFloat(movie.rating) >= 5) {
-                    rateColor = "orange"
-                } else {
-                    rateColor = "red"
-                }
-                moviesContainer.innerHTML += `
-                <a href="?id=${movie.id}" target="_blank" class="movie-card">
-                    <div>
-                        <div class="movie-card__top">
-                            <img class="movie-card__top-image" src="${poster}" alt="No image for: ${movie.title}">
-                            <div class="movie-card__top-quality">
-                            ${quality1080 ? quality1080 : ''}
-                            ${quality720 ? quality720 : ''}
-                            ${quality3D ? quality3D : ''}
-                            ${quality2160 ? quality2160 : ''}
-                            </div>
-                            <p class="movie-card__top-summary"><span style="display: block;margin-bottom: 1rem">Summary:</span>
-                            ${movie.summary}</p>
-                        </div>
-                        <div class="movie_card__details">
-                            <h3 class="movie_card__details-title">${movie.title} (${movie.year})</h3>
-                            <span class="movie_card__details-rate" style="color: ${rateColor}; border-color: ${rateColor}">${movie.rating}</span>
-                        </div>
-                    </div>
-                </a>
-            `
+            let genres = [];
+            movie.genres.map(genre => {
+                genres += `<small class="genre">${genre}</small>`;
             })
+
+            let torrentQualities = [];
+            let torrentLinks = [];
+            movie.torrents.map(link => {
+                torrentQualities += `<small class="quality">${link.type} ${link.quality}</small>`;
+                torrentLinks += `
+                <div class="torrent-links">
+                    <span class="torrent-link">${link.type} ${link.quality}: 
+                        <a href="${link.url}">Download</a>
+                        <span>${link.size}</span>
+                    </span>
+                </div>
+                `
+            })
+
+            let casts = [];
+            movie.cast.map(cast => {
+                casts += `
+                <div class="cast">
+                    <div class="cast-name-container">
+                        <span class="cast-name">${cast.name} <br> as <br> ${cast.character_name}</span>
+                    </div>
+                    <img src="${cast.url_small_image}" alt="${cast.name}">
+                </div>
+                `
+            })
+
+            let screenShots = [];
+            if (movie.large_screenshot_image1) {
+                screenShots += `<img src="${movie.large_screenshot_image1}" alt="screen"></img>`;
+                if (movie.large_screenshot_image2) {
+                    screenShots += `<img src="${movie.large_screenshot_image2}" alt="screen"></img>`;
+                    if (movie.large_screenshot_image3) {
+                        screenShots += `<img src="${movie.large_screenshot_image3}" alt="screen"></img>`;
+                        if (movie.large_screenshot_image4) {
+                            screenShots += `<img src="${movie.large_screenshot_image4}" alt="screen"></img>`;
+                        }
+                    }
+                }
+            }
+
+            main.innerHTML = `
+                <div class="movie">
+            <img src="${movie.large_cover_image}" alt="ironman">
+            <div class="movie__details">
+                <h3 class="movie__details-name">${movie.title}</h3>
+                <div class="movie__details-scores">
+                    <span class="imdb-score">IMDB: ${movie.rating}</span>
+                </div>
+                <div class="movie__details-genres"> Genres: 
+                    ${genres}
+                </div>
+                <div class="movie__details-qualities"> Available in:
+                    ${torrentQualities} 
+                </div>
+                <div class="movie__details-language"> Language: 
+                    <span>${movie.language}</span>
+                </div>
+                <div class="movie__details-summary">Sumary: 
+                    <p class="summary">${movie.description_intro}</p>
+                </div>
+            </div>
+        </div>
+        <div class="movie movie-casts-section">
+            <h4>Cast</h4>
+            <div class="movie-casts">${casts}</div>
+        </div>
+        <div class="movie movie-screenshots">
+            <h4>Screenshots</h4>
+            <div class="screenshots">${screenShots}</div>
+        </div>
+        <div class="movie movie-torrent">
+            <h4>Torrent Links</h4>
+            ${torrentLinks}
+        </div>
+            `
+            // })
         })
         .catch(function (error) {
             // handle error
@@ -252,15 +272,17 @@ const inputOnChangeHandler = (term) => {
         });
 }
 
-const SearchInput = document.querySelector('#SearchInput');
+const searchInput = document.querySelector('#searchInput');
 
 let timer;
-SearchInput.addEventListener('keyup', (e) => {
+searchInput.addEventListener('keyup', (e) => {
     const text = e.target.value;
     spinnerBlock();
 
-    if (text.length > 0) {
-        resultsPreview.classList.add('show-results-box')
+    if ((searchInput == document.activeElement && text.length > 0)) {
+        resultsPreview.classList.add('show-results-box');
+
+        // TODO: add the backdrop to the screen when the input is active  and delete it when its not active
 
         clearTimeout(timer);
 
@@ -330,22 +352,25 @@ const onFormSubmitHandler = (term) => {
                         rateColor = "red"
                     }
                     moviesContainer.innerHTML += `
-            <div class="movie-card">
-                <div class="movie-card__top">
-                    <img class="movie-card__top-image" src="${poster}" alt="No image for: ${movie.title}">
-                    <div class="movie-card__top-quality">
-                    ${quality1080 ? quality1080 : ''}
-                    ${quality720 ? quality720 : ''}
-                    ${quality3D ? quality3D : ''}
-                    ${quality2160 ? quality2160 : ''}
+                    <a href="?id=${movie.id}" class="movie-card">
+                    <div>
+                        <div class="movie-card__top">
+                            <img class="movie-card__top-image" src="${poster}" alt="No image for: ${movie.title}">
+                            <div class="movie-card__top-quality">
+                            ${quality1080 ? quality1080 : ''}
+                            ${quality720 ? quality720 : ''}
+                            ${quality3D ? quality3D : ''}
+                            ${quality2160 ? quality2160 : ''}
+                            </div>
+                            <p class="movie-card__top-summary"><span style="display: block;margin-bottom: 1rem">Summary:</span>
+                            ${movie.summary}</p>
+                        </div>
+                        <div class="movie_card__details">
+                            <h3 class="movie_card__details-title">${movie.title} (${movie.year})</h3>
+                            <span class="movie_card__details-rate" style="color: ${rateColor}; border-color: ${rateColor}">${movie.rating}</span>
+                        </div>
                     </div>
-                    <p class="movie-card__top-summary"><span style="display: block;margin-bottom: 1rem">Summary:</span>${movie.summary}</p>
-                </div>
-                <div class="movie_card__details">
-                    <h3 class="movie_card__details-title">${movie.title}</h3>
-                    <span class="movie_card__details-rate" style="color: ${rateColor}; border-color: ${rateColor}">${movie.rating}</span>
-                </div>
-            </div>
+                </a>
             `
                 })
             } else {
@@ -365,13 +390,13 @@ const onFormSubmitHandler = (term) => {
         });
 }
 searchForm.addEventListener('submit', () => {
-    if (SearchInput.value) {
-        SearchInput.style.borderColor = '#aaa';
-        onFormSubmitHandler(SearchInput.value);
-        SearchInput.value = '';
+    if (searchInput.value) {
+        searchInput.style.borderColor = '#aaa';
+        onFormSubmitHandler(searchInput.value);
+        searchInput.value = '';
 
     } else {
-        SearchInput.style.borderColor = 'red';
+        searchInput.style.borderColor = 'red';
     }
 
 })

@@ -17,8 +17,8 @@
         <section class="search-section">
             <form action="#" id="searchForm" onsubmit="onFormSubmitHandler" autocomplete="off">
                 <div class="inputSection">
-                    <label for="SearchInput" style="display: none;"></label>
-                <input type="search" onchange="inputOnChangeHandler" id="SearchInput" placeholder="Find your movie ..." autocomplete>
+                    <label for="searchInput" style="display: none;"></label>
+                <input type="search" onchange="inputOnChangeHandler" id="searchInput" placeholder="Find your movie ..." autocomplete>
                 <div class="spinner" id="spinner"></div>
                 </div>
             </form>
@@ -55,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <div class="movie">
+        <div class="movie movie-casts-section">
             <h4>Casts:</h4>
             <div class="movie-casts">
                 <div class="cast">
@@ -64,6 +64,28 @@
                     </div>
                     <img src="images/ironman1.jpg" alt="cast">
                 </div>
+                <div class="cast">
+                    <div class="cast-name-container">
+                        <span class="cast-name">robbert downy junnior <br> as <br> iron man</span>
+                    </div>
+                    <img src="images/ironman1.jpg" alt="cast">
+                </div>
+            </div>
+        </div>
+        <div class="movie movie-screenshots">
+            <h4>Screenshots</h4>
+            <div class="screenshots">
+                <img src="images/ironman1.jpg" alt="screen">
+                <img src="images/ironman1.jpg" alt="screen">
+                <img src="images/ironman1.jpg" alt="screen">
+            </div>
+        </div>
+        <div class="movie movie-torrent">
+            <h4>Torrent Links</h4>
+            <div class="torrent-links">
+                <span class="torrent-link">1080: 
+                    <a href="#">torrent 1080 bluray</a>
+                </span>
             </div>
         </div>
         <div class="spinner-large" id="spinnerLarge"></div>
