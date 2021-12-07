@@ -121,6 +121,15 @@ const fetchMovies = (url) => {
 
 
 
+const openSearchMovie = () => {
+    document.querySelector('#searchMovie').style.height = '100%';
+    document.querySelector('#searchMovie').style.width = '100%';
+    document.querySelector("#searchInput").focus();
+}
+const closeSearchMovie = () => {
+    document.querySelector('#searchMovie').style.height = '0';
+    document.querySelector('#searchMovie').style.width = '0';
+}
 
 
 
