@@ -7,6 +7,10 @@ const spinnerLarge = document.querySelector('#spinnerLarge');
 const main = document.querySelector('main');
 
 
+// TODO: add the backdrop to the screen when the input is active  and delete it when its not active
+// TODO: when user clicks on a movie page refreshes. why?
+
+
 const spinnerNone = () => {
     spinner.style.display = "none";
 }
@@ -21,7 +25,112 @@ const spinnerLargeBlock = () => {
     spinnerLarge.style.display = "block";
 }
 
-spinnerLargeBlock();
+
+const fetchMovies = (url) => {
+    spinnerLargeBlock();
+    axios.get(url)
+        .then(function (response) {
+            resultsPreview.classList.remove('show-results-box')
+            moviesContainer.innerHTML = '';
+
+            // handle success
+            console.log(response.data.data);
+
+            if (response.data.data.movies) {
+                const movies = response.data.data.movies;
+                movies.map(movie => {
+                    let qualities = [];
+                    movie.torrents.map(item => {
+                        // console.log(item.quality)
+                        qualities += `<span class="movie-card__top-quality-item">${item.type} ${item.quality}</span>`
+                    })
+
+                    let genres = [];
+                    movie.genres.map(item => {
+                        // console.log(item.quality)
+                        genres += `<span>${item}</span>`
+                    })
+
+                    let poster = 'images/ironman1.jpg'
+                    if (movie.large_cover_image) {
+                        poster = movie.large_cover_image
+                    } else if (movie.medium_cover_image) {
+                        poster = movie.medium_cover_image
+                    } else if (movie.small_cover_image) {
+                        poster = movie.small_cover_image
+                    } else {
+                        poster = 'images/ironman1.jpg'
+                    }
+
+                    let rateColor
+                    if (parseFloat(movie.rating) >= 7) {
+                        rateColor = "green"
+                    } else if (parseFloat(movie.rating) >= 5) {
+                        rateColor = "orange"
+                    } else {
+                        rateColor = "red"
+                    }
+                    moviesContainer.innerHTML += `
+                    <a href="?id=${movie.id}">
+                        <div class="movie">
+                            <img class="movie-img" src="${poster}" alt="${movie.title}">
+                                <div class="movie-name">
+                                    <h3>${movie.title_long}</h3>
+                                </div>
+                                <div class="movie-rate">
+                                    <span>IMDB: ${movie.rating}</span>
+                                </div>
+                            <div class="movie-details">
+                                <h4 class="movie-details__title">summary:</h4>
+                                <p class="movie-details__text">${movie.summary}</p>
+                                <div class="movie-details__genres">
+                                    <h4>Genres: </h4>
+                                    <div class="movie-details__genres-items">
+                                        ${genres}
+                                    </div>
+                                </div>
+                                <div class="movie-details__qualities">
+                                    <h4>Available in: </h4>
+                                    <div class="movie-details__qualities-items">
+                                    ${qualities}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    `
+                })
+            } else {
+                moviesContainer.innerHTML += `
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"> Not found, Please try something else... </div>
+                `
+            }
+
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .then(function () {
+            spinnerLargeNone();
+            // always executed
+        });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Movie Details
@@ -81,40 +190,42 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
                 }
             }
 
-            main.innerHTML = `
+            moviesContainer.innerHTML = `
+                <div>
                 <div class="movie">
-            <img src="${movie.large_cover_image}" alt="ironman">
-            <div class="movie__details">
-                <h3 class="movie__details-name">${movie.title}</h3>
-                <div class="movie__details-scores">
-                    <span class="imdb-score">IMDB: ${movie.rating}</span>
-                </div>
-                <div class="movie__details-genres"> Genres: 
-                    ${genres}
-                </div>
-                <div class="movie__details-qualities"> Available in:
-                    ${torrentQualities} 
-                </div>
-                <div class="movie__details-language"> Language: 
-                    <span>${movie.language}</span>
-                </div>
-                <div class="movie__details-summary">Sumary: 
-                    <p class="summary">${movie.description_intro}</p>
+                <img src="${movie.large_cover_image}" alt="ironman">
+                <div class="movie__details">
+                    <h3 class="movie__details-name">${movie.title}</h3>
+                    <div class="movie__details-scores">
+                        <span class="imdb-score">IMDB: ${movie.rating}</span>
+                    </div>
+                    <div class="movie__details-genres"> Genres: 
+                        ${genres}
+                    </div>
+                    <div class="movie__details-qualities"> Available in:
+                        ${torrentQualities} 
+                    </div>
+                    <div class="movie__details-language"> Language: 
+                        <span>${movie.language}</span>
+                    </div>
+                    <div class="movie__details-summary">Sumary: 
+                        <p class="summary">${movie.description_intro}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="movie movie-casts-section">
-            <h4>Cast</h4>
-            <div class="movie-casts">${casts}</div>
-        </div>
-        <div class="movie movie-screenshots">
-            <h4>Screenshots</h4>
-            <div class="screenshots">${screenShots}</div>
-        </div>
-        <div class="movie movie-torrent">
-            <h4>Torrent Links</h4>
-            ${torrentLinks}
-        </div>
+            <div class="movie movie-casts-section">
+                <h4>Cast</h4>
+                <div class="movie-casts">${casts}</div>
+            </div>
+            <div class="movie movie-screenshots">
+                <h4>Screenshots</h4>
+                <div class="screenshots">${screenShots}</div>
+            </div>
+            <div class="movie movie-torrent">
+                <h4>Torrent Links</h4>
+                ${torrentLinks}
+            </div>
+                </div>
             `
             // })
         })
@@ -134,90 +245,7 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
 } else {
 
     // Load movies on page load
-    axios.get('https://yts.mx/api/v2/list_movies.json?sort_by=like_count')
-        .then(function (response) {
-            // handle success
-            console.log(response);
-            console.log(response.data);
-            console.log(response.data.data);
-            const movies = response.data.data.movies;
-            movies.map(movie => {
-                // console.log(movie.torrents)
-                let quality2160;
-                let quality1080;
-                let quality720;
-                let quality3D;
-                movie.torrents.map(item => {
-                    // console.log(item.quality)
-                    if (item.quality === "2160p") {
-                        quality2160 = `<span class="movie-card__top-quality-item">2160p</span>`
-                    }
-                    if (item.quality === "1080p") {
-                        quality1080 = `<span class="movie-card__top-quality-item">1080p</span>`
-                    }
-                    if (item.quality === "720p") {
-                        quality720 = `<span class="movie-card__top-quality-item">720p</span>`
-                    }
-                    if (item.quality === "3D") {
-                        quality3D = `<span class="movie-card__top-quality-item">3D</span>`
-                    }
-                })
-
-                let poster = 'images/ironman1.jpg'
-                if (movie.large_cover_image) {
-                    poster = movie.large_cover_image
-                } else if (movie.medium_cover_image) {
-                    poster = movie.medium_cover_image
-                } else if (movie.small_cover_image) {
-                    poster = movie.small_cover_image
-                } else {
-                    poster = 'images/ironman1.jpg'
-                }
-
-                let rateColor
-                if (parseFloat(movie.rating) >= 7) {
-                    rateColor = "green"
-                } else if (parseFloat(movie.rating) >= 5) {
-                    rateColor = "orange"
-                } else {
-                    rateColor = "red"
-                }
-                moviesContainer.innerHTML += `
-                <a href="?id=${movie.id}" class="movie-card">
-                    <div>
-                        <div class="movie-card__top">
-                            <img class="movie-card__top-image" src="${poster}" alt="No image for: ${movie.title}">
-                            <div class="movie-card__top-quality">
-                            ${quality1080 ? quality1080 : ''}
-                            ${quality720 ? quality720 : ''}
-                            ${quality3D ? quality3D : ''}
-                            ${quality2160 ? quality2160 : ''}
-                            </div>
-                            <p class="movie-card__top-summary"><span style="display: block;margin-bottom: 1rem">Summary:</span>
-                            ${movie.summary}</p>
-                        </div>
-                        <div class="movie_card__details">
-                            <h3 class="movie_card__details-title">${movie.title} (${movie.year})</h3>
-                            <span class="movie_card__details-rate" style="color: ${rateColor}; border-color: ${rateColor}">${movie.rating}</span>
-                        </div>
-                    </div>
-                </a>
-            `
-            })
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-            if (error == "Error: Network Error") {
-                moviesContainer.innerHTML = `
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"> Network Error, Please check your connection... </div>
-            `
-            }
-        })
-        .then(function () {
-            spinnerLargeNone();
-            // always executed
-        });
+    fetchMovies('https://yts.mx/api/v2/list_movies.json?sort_by=like_count');
 }
 
 // Load movies list on user type
@@ -244,11 +272,13 @@ const inputOnChangeHandler = (term) => {
                     }
 
                     resultsPreview.innerHTML += `
-                <div class="preview-card">
-                    <img class="preview-card__image" src="${poster}" alt="No image for: ${movie.title}">
-                    <h5 class="preview-card__title">${movie.title}</h5>
-                </div>
-                `
+                        <a href="?id=${movie.id}">
+                            <div class="preview-card">
+                                <img class="preview-card__image" src="${poster}" alt="No image for: ${movie.title}">
+                                <h5 class="preview-card__title">${movie.title}</h5>
+                            </div>
+                        </a>
+                        `
                 })
             } else {
                 resultsPreview.innerHTML += `
@@ -282,8 +312,6 @@ searchInput.addEventListener('keyup', (e) => {
     if ((searchInput == document.activeElement && text.length > 0)) {
         resultsPreview.classList.add('show-results-box');
 
-        // TODO: add the backdrop to the screen when the input is active  and delete it when its not active
-
         clearTimeout(timer);
 
         timer = setTimeout(() => {
@@ -300,94 +328,8 @@ searchInput.addEventListener('keyup', (e) => {
 
 // On submit form Movies list
 const onFormSubmitHandler = (term) => {
-    spinnerLargeBlock();
-    axios.get(`https://yts.mx/api/v2/list_movies.json?query_term=${term}&order_by=asc&limit=20`)
-        .then(function (response) {
-            resultsPreview.classList.remove('show-results-box')
-            moviesContainer.innerHTML = '';
 
-            // handle success
-            console.log(response.data.data);
-
-            if (response.data.data.movies) {
-                const movies = response.data.data.movies;
-                movies.map(movie => {
-                    let quality2160;
-                    let quality1080;
-                    let quality720;
-                    let quality3D;
-                    movie.torrents.map(item => {
-                        // console.log(item.quality)
-                        if (item.quality === "2160p") {
-                            quality2160 = `<span class="movie-card__top-quality-item">2160p</span>`
-                        }
-                        if (item.quality === "1080p") {
-                            quality1080 = `<span class="movie-card__top-quality-item">1080p</span>`
-                        }
-                        if (item.quality === "720p") {
-                            quality720 = `<span class="movie-card__top-quality-item">720p</span>`
-                        }
-                        if (item.quality === "3D") {
-                            quality3D = `<span class="movie-card__top-quality-item">3D</span>`
-                        }
-                    })
-
-                    let poster = 'images/ironman1.jpg'
-                    if (movie.large_cover_image) {
-                        poster = movie.large_cover_image
-                    } else if (movie.medium_cover_image) {
-                        poster = movie.medium_cover_image
-                    } else if (movie.small_cover_image) {
-                        poster = movie.small_cover_image
-                    } else {
-                        poster = 'images/ironman1.jpg'
-                    }
-
-                    let rateColor
-                    if (parseFloat(movie.rating) >= 7) {
-                        rateColor = "green"
-                    } else if (parseFloat(movie.rating) >= 5) {
-                        rateColor = "orange"
-                    } else {
-                        rateColor = "red"
-                    }
-                    moviesContainer.innerHTML += `
-                    <a href="?id=${movie.id}" class="movie-card">
-                    <div>
-                        <div class="movie-card__top">
-                            <img class="movie-card__top-image" src="${poster}" alt="No image for: ${movie.title}">
-                            <div class="movie-card__top-quality">
-                            ${quality1080 ? quality1080 : ''}
-                            ${quality720 ? quality720 : ''}
-                            ${quality3D ? quality3D : ''}
-                            ${quality2160 ? quality2160 : ''}
-                            </div>
-                            <p class="movie-card__top-summary"><span style="display: block;margin-bottom: 1rem">Summary:</span>
-                            ${movie.summary}</p>
-                        </div>
-                        <div class="movie_card__details">
-                            <h3 class="movie_card__details-title">${movie.title} (${movie.year})</h3>
-                            <span class="movie_card__details-rate" style="color: ${rateColor}; border-color: ${rateColor}">${movie.rating}</span>
-                        </div>
-                    </div>
-                </a>
-            `
-                })
-            } else {
-                moviesContainer.innerHTML += `
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"> Not found, Please try something else... </div>
-                `
-            }
-
-        })
-        .catch(function (error) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            spinnerLargeNone();
-            // always executed
-        });
+    fetchMovies(`https://yts.mx/api/v2/list_movies.json?query_term=${term}&order_by=asc&limit=20`)
 }
 searchForm.addEventListener('submit', () => {
     if (searchInput.value) {
