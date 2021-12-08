@@ -1,14 +1,16 @@
 
+"use strict"
+
+
 const moviesContainer = document.querySelector('.movies');
 const resultsPreview = document.querySelector('#resultsPreview');
 const searchForm = document.querySelector('#searchForm');
 const spinner = document.querySelector('#spinner');
 const spinnerLarge = document.querySelector('#spinnerLarge');
 const main = document.querySelector('main');
+const searchInput = document.querySelector('#searchInput');
 
 
-// TODO: add the backdrop to the screen when the input is active  and delete it when its not active
-// TODO: when user clicks on a movie page refreshes. why?
 
 
 const spinnerNone = () => {
@@ -45,10 +47,10 @@ const fetchMovies = (url) => {
                         qualities += `<span class="movie-card__top-quality-item">${item.type} ${item.quality}</span>`
                     })
 
-                    let genres = [];
+                    let genre = [];
                     movie.genres.map(item => {
                         // console.log(item.quality)
-                        genres += `<span>${item}</span>`
+                        genre += `<span>${item}</span>`
                     })
 
                     let poster = 'images/ironman1.jpg'
@@ -73,7 +75,7 @@ const fetchMovies = (url) => {
                     moviesContainer.innerHTML += `
                     <a href="?id=${movie.id}">
                         <div class="movie">
-                            <img class="movie-img" src="${poster}" alt="${movie.title}">
+                            <img class="movie-img" loading="lazy" src="${poster}" alt="${movie.title}">
                                 <div class="movie-name">
                                     <h3>${movie.title_long}</h3>
                                 </div>
@@ -86,7 +88,7 @@ const fetchMovies = (url) => {
                                 <div class="movie-details__genres">
                                     <h4>Genres: </h4>
                                     <div class="movie-details__genres-items">
-                                        ${genres}
+                                        ${genre}
                                     </div>
                                 </div>
                                 <div class="movie-details__qualities">
@@ -100,6 +102,7 @@ const fetchMovies = (url) => {
                     </a>
                     `
                 })
+
             } else {
                 moviesContainer.innerHTML += `
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"> Not found, Please try something else... </div>
@@ -185,9 +188,10 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
                 `
             })
 
-            let screenShots = [];
+
+            let screenShots = ``;
             if (movie.large_screenshot_image1) {
-                screenShots += `<img src="${movie.large_screenshot_image1}" alt="screen"></img>`;
+                screenShots += `<a><img src="${movie.large_screenshot_image1}" alt="screen"></img></a>`;
                 if (movie.large_screenshot_image2) {
                     screenShots += `<img src="${movie.large_screenshot_image2}" alt="screen"></img>`;
                     if (movie.large_screenshot_image3) {
@@ -201,36 +205,36 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
 
             moviesContainer.innerHTML = `
                 <div>
-                <div class="movie">
+                <div class="movie-page">
                 <img src="${movie.large_cover_image}" alt="ironman">
-                <div class="movie__details">
-                    <h3 class="movie__details-name">${movie.title}</h3>
-                    <div class="movie__details-scores">
+                <div class="movie-page__details">
+                    <h3 class="movie-page__details-name">${movie.title}</h3>
+                    <div class="movie-page__details-scores">
                         <span class="imdb-score">IMDB: ${movie.rating}</span>
                     </div>
-                    <div class="movie__details-genres"> Genres: 
+                    <div class="movie-page__details-genres"> Genres: 
                         ${genres}
                     </div>
-                    <div class="movie__details-qualities"> Available in:
+                    <div class="movie-page__details-qualities"> Available in:
                         ${torrentQualities} 
                     </div>
-                    <div class="movie__details-language"> Language: 
+                    <div class="movie-page__details-language"> Language: 
                         <span>${movie.language}</span>
                     </div>
-                    <div class="movie__details-summary">Sumary: 
+                    <div class="movie-page__details-summary">Sumary: 
                         <p class="summary">${movie.description_intro}</p>
                     </div>
                 </div>
             </div>
-            <div class="movie movie-casts-section">
+            <div class="movie-page movie-casts-section">
                 <h4>Cast</h4>
                 <div class="movie-casts">${casts}</div>
             </div>
-            <div class="movie movie-screenshots">
+            <div class="movie-page movie-screenshots">
                 <h4>Screenshots</h4>
                 <div class="screenshots">${screenShots}</div>
             </div>
-            <div class="movie movie-torrent">
+            <div class="movie-page movie-torrent">
                 <h4>Torrent Links</h4>
                 ${torrentLinks}
             </div>
@@ -256,6 +260,7 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
     // Load movies on page load
     fetchMovies('https://yts.mx/api/v2/list_movies.json?sort_by=like_count');
 }
+
 
 // Load movies list on user type
 const inputOnChangeHandler = (term) => {
@@ -289,6 +294,7 @@ const inputOnChangeHandler = (term) => {
                         </a>
                         `
                 })
+
             } else {
                 resultsPreview.innerHTML += `
                     <small>not found, try something else...</small>
@@ -311,7 +317,6 @@ const inputOnChangeHandler = (term) => {
         });
 }
 
-const searchInput = document.querySelector('#searchInput');
 
 let timer;
 searchInput.addEventListener('keyup', (e) => {
@@ -337,17 +342,17 @@ searchInput.addEventListener('keyup', (e) => {
 
 // On submit form Movies list
 const onFormSubmitHandler = (term) => {
-
     fetchMovies(`https://yts.mx/api/v2/list_movies.json?query_term=${term}&order_by=asc&limit=20`)
 }
 searchForm.addEventListener('submit', () => {
     if (searchInput.value) {
-        searchInput.style.borderColor = '#aaa';
         onFormSubmitHandler(searchInput.value);
+        searchInput.style.borderColor = '#aaa';
         searchInput.value = '';
+        closeSearchMovie();
 
     } else {
-        searchInput.style.borderColor = 'red';
+        searchInput.style.border = '2px solid red';
     }
 
 })
