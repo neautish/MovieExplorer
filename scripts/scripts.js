@@ -36,20 +36,17 @@ const fetchMovies = (url) => {
             moviesContainer.innerHTML = '';
 
             // handle success
-            console.log(response.data.data);
 
             if (response.data.data.movies) {
                 const movies = response.data.data.movies;
                 movies.map(movie => {
                     let qualities = [];
                     movie.torrents.map(item => {
-                        // console.log(item.quality)
                         qualities += `<span class="movie-card__top-quality-item">${item.type} ${item.quality}</span>`
                     })
 
                     let genre = [];
                     movie.genres.map(item => {
-                        // console.log(item.quality)
                         genre += `<span>${item}</span>`
                     })
 
@@ -112,7 +109,6 @@ const fetchMovies = (url) => {
         })
         .catch(function (error) {
             // handle error
-            console.log(error);
         })
         .then(function () {
             spinnerLargeNone();
@@ -147,7 +143,6 @@ const closeSearchMovie = () => {
 
 // Movie Details
 let searchParams = new URLSearchParams(window.location.search);
-console.log(searchParams.has('id'))
 
 if (searchParams.has('id') && searchParams.get('id') != '') {
     spinnerLargeBlock();
@@ -155,7 +150,6 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
         .then(function (response) {
             // handle success
             const movie = response.data.data.movie;
-            console.log(movie)
 
             let genres = [];
             movie.genres.map(genre => {
@@ -244,7 +238,6 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
         })
         .catch(function (error) {
             // handle error
-            console.log(error);
             if (error == "Error: Network Error") {
                 moviesContainer.innerHTML = `
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"> Network Error, Please check your connection... </div>
@@ -269,7 +262,6 @@ const inputOnChangeHandler = (term) => {
             resultsPreview.innerHTML = '';
 
             // handle success
-            console.log(response.data.data);
 
             if (response.data.data.movies) {
                 const movies = response.data.data.movies;
@@ -304,7 +296,6 @@ const inputOnChangeHandler = (term) => {
         })
         .catch(function (error) {
             // handle error
-            console.log(error);
             if (error == "Error: Network Error") {
                 resultsPreview.innerHTML = `
                     <small> Network Error, Please check your connection... </small>
