@@ -1,5 +1,4 @@
-
-"use strict"
+"use strict";
 
 
 const moviesContainer = document.querySelector('.movies');
@@ -9,7 +8,11 @@ const spinner = document.querySelector('#spinner');
 const spinnerLarge = document.querySelector('#spinnerLarge');
 const main = document.querySelector('main');
 const searchInput = document.querySelector('#searchInput');
+const pages = document.querySelector('.pages');
 
+
+let movieDetailsParam = new URLSearchParams(window.location.search);
+let movieSearchParam = new URLSearchParams(window.location.search);
 
 
 
@@ -36,9 +39,32 @@ const fetchMovies = (url) => {
             moviesContainer.innerHTML = '';
 
             // handle success
-
+            console.log(response);
+            console.log(response.data);
+            console.log(response.data.data);
             if (response.data.data.movies) {
                 const movies = response.data.data.movies;
+
+                if (response.data.data.movie_count > 20) {
+                    for (let i = 1; i <= 10; i++) {
+                        let url = window.location.href.slice(0, -1);
+                        // url.slice(0, 10);
+                        console.log(url)
+                        pages.innerHTML += `
+                            <a href="${url + i}" class="page">${i}</a>
+                        `
+                    }
+                }
+                if (movieSearchParam.has('page')) {
+                    const pageNums = document.querySelectorAll('.page');
+                    for (let i = 0; i < pageNums.length; i++) {
+                        if (Number(movieSearchParam.get('page')) === Number(pageNums[i].textContent)) {
+                            pageNums[i].style.backgroundColor = '#215487a1';
+                        }
+                    }
+                }
+
+
                 movies.map(movie => {
                     let qualities = [];
                     movie.torrents.map(item => {
@@ -109,6 +135,11 @@ const fetchMovies = (url) => {
         })
         .catch(function (error) {
             // handle error
+            if (error == "Error: Network Error") {
+                moviesContainer.innerHTML = `
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"> Network Error, Please check your connection... </div>
+            `
+            }
         })
         .then(function () {
             spinnerLargeNone();
@@ -116,7 +147,6 @@ const fetchMovies = (url) => {
         });
 
 }
-
 
 
 
@@ -130,23 +160,21 @@ const closeSearchMovie = () => {
     document.querySelector('#searchMovie').style.width = '0';
 }
 
+// Load movies on page load
+
+if ((!movieDetailsParam.has('id') || movieDetailsParam.get('id') === '') && (!movieSearchParam.has('query') || movieSearchParam.get('query') === '')) {
+    fetchMovies(`https://yts.mx/api/v2/list_movies.json?sort_by=like_count`);
+    // TODO: add page=1 to the url when the first time page loads
+}
+if (movieSearchParam.has('query') && movieSearchParam.get('query') != '') {
+    fetchMovies(`https://yts.mx/api/v2/list_movies.json?query_term=${movieSearchParam.get('query')}&order_by=asc&limit=20&page=${movieSearchParam.get('page')}`)
+}
 
 
-
-
-
-
-
-
-
-
-
-// Movie Details
-let searchParams = new URLSearchParams(window.location.search);
-
-if (searchParams.has('id') && searchParams.get('id') != '') {
+// Movie Details page
+if (movieDetailsParam.has('id') && movieDetailsParam.get('id') != '') {
     spinnerLargeBlock();
-    axios.get(`https://yts.mx/api/v2/movie_details.json?movie_id=${searchParams.get('id')}&with_images=true&with_cast=true`)
+    axios.get(`https://yts.mx/api/v2/movie_details.json?movie_id=${movieDetailsParam.get('id')}&with_images=true&with_cast=true`)
         .then(function (response) {
             // handle success
             const movie = response.data.data.movie;
@@ -248,16 +276,12 @@ if (searchParams.has('id') && searchParams.get('id') != '') {
             spinnerLargeNone();
             // always executed
         });
-} else {
-
-    // Load movies on page load
-    fetchMovies('https://yts.mx/api/v2/list_movies.json?sort_by=like_count');
 }
 
 
 // Load movies list on user type
 const inputOnChangeHandler = (term) => {
-    axios.get(`https://yts.mx/api/v2/list_movies.json?query_term=${term}&order_by=asc&limit=10`)
+    axios.get(`https://yts.mx/api/v2/list_movies.json?query_term=${term}&order_by=asc&limit=20`)
         .then(function (response) {
             resultsPreview.innerHTML = '';
 
@@ -309,6 +333,7 @@ const inputOnChangeHandler = (term) => {
 }
 
 
+// Show results on typing
 let timer;
 searchInput.addEventListener('keyup', (e) => {
     const text = e.target.value;
@@ -330,20 +355,16 @@ searchInput.addEventListener('keyup', (e) => {
 
 })
 
+// On form submit
+searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-// On submit form Movies list
-const onFormSubmitHandler = (term) => {
-    fetchMovies(`https://yts.mx/api/v2/list_movies.json?query_term=${term}&order_by=asc&limit=20`)
-}
-searchForm.addEventListener('submit', () => {
     if (searchInput.value) {
-        onFormSubmitHandler(searchInput.value);
+        window.location.search = `query=${searchInput.value}&page=1`; // or param=new_value
         searchInput.style.borderColor = '#aaa';
         searchInput.value = '';
         closeSearchMovie();
-
     } else {
         searchInput.style.border = '2px solid red';
     }
-
 })

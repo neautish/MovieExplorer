@@ -130,9 +130,6 @@ a {
     border-radius: 3px;
 }
 
-
-
-
 .overlay {
     position: fixed;
     top: 0;
@@ -163,7 +160,6 @@ a {
     align-items: center;
     cursor: pointer;
 }
-
 
 /* search section */
 .search-section {
@@ -265,6 +261,27 @@ a {
 }
 
 
+/* pages */
+.pages {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 3rem 0;
+    gap: .5rem;
+}
+.pages .page {
+    background-color: #215487;
+    padding: .5rem .8rem;
+    border-radius: 3px;
+    color: #fff;
+}
+.pages .page:hover {
+    background-color: #215487a1;
+}
+.pages .page:active {
+    background-color: #1a3d5f;
+}
+
 
 
 @media screen and (min-width: 800px) {
@@ -278,7 +295,7 @@ a {
 
 
 
-
+/* movie page styles */
 .movie-page {
     max-width: 1200px;
     display: flex;
@@ -373,7 +390,6 @@ section.casts {
 .movie-casts .cast:hover .cast-name-container {
     opacity: .8;
     transition-duration: .2s;
-    /* opacity: 1; */
 }
 .cast-name {
     position: absolute;

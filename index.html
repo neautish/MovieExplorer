@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A Movie Website With Download Link">
+    <meta name="keywords" content="Movie, Download Movie for Free, Film">
+    <meta name="author" content="ND">
     <link rel="stylesheet" href="styles/styles.css">
-    
     <title>MovieExplorer</title>
 </head>
 <body>
@@ -17,9 +19,8 @@
     </header>
     <div class="overlay" id="searchMovie">
         <a href="javascript:void(0)" class="closebtn" onclick="closeSearchMovie()">&times;</a>
-
         <section class="search-section">
-            <form action="#" id="searchForm" onsubmit="onFormSubmitHandler" autocomplete="off">
+            <form action="#" id="searchForm" autocomplete="off">
                 <div class="inputSection">
                     <label for="searchInput" style="display: none;"></label>
                 <input type="search" onchange="inputOnChangeHandler" id="searchInput" placeholder="Find your movie ..." autocomplete>
@@ -27,15 +28,15 @@
                 </div>
             </form>
             <div class="results-preview" id="resultsPreview"></div>
-            
         </section>
     </div>
     <main>
         <div class="movies"></div>
+        <div class="pages"></div>
     </main>
     <div class="spinner-large" id="spinnerLarge"></div>
 
-
+    <!-- Scripts -->
     <script src="scripts/axios.min.js"></script>
     <script src="scripts/scripts.js"></script>
 </body>
