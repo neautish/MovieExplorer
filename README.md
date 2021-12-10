@@ -1,4 +1,4 @@
 # MovieExplorer
 
-A fun API based Movie Explorer App writtn in JavaScript (HTML & CSS) \
+A fun API based Movie Explorer App written in JavaScript (HTML & CSS) \
 url: https://movieexplorer-js.netlify.app/
