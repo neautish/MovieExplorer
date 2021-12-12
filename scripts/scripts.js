@@ -45,16 +45,15 @@ const fetchMovies = (url) => {
             if (response.data.data.movies) {
                 const movies = response.data.data.movies;
 
-                if (response.data.data.movie_count > 20) {
-                    for (let i = 1; i <= 10; i++) {
-                        let url = window.location.href.slice(0, -1);
-                        // url.slice(0, 10);
-                        console.log(url)
-                        pages.innerHTML += `
-                            <a href="${url + i}" class="page">${i}</a>
+                // if (response.data.data.movie_count > 20 && response.data.data.movie_count < 200) {
+                for (let i = 1; i <= (response.data.data.movie_count > 200 ? 9 : response.data.data.movie_count / 20 + 1); i++) {
+                    let url = new URL(window.location.href);
+                    url.searchParams.set('page', i)
+                    pages.innerHTML += `
+                            <a href="${url}" class="page">${i}</a>
                         `
-                    }
                 }
+                // }
                 if (movieSearchParam.has('page')) {
                     const pageNums = document.querySelectorAll('.page');
                     for (let i = 0; i < pageNums.length; i++) {
@@ -163,7 +162,7 @@ const closeSearchMovie = () => {
 // Load movies on page load
 
 if ((!movieDetailsParam.has('id') || movieDetailsParam.get('id') === '') && (!movieSearchParam.has('query') || movieSearchParam.get('query') === '')) {
-    fetchMovies(`https://yts.mx/api/v2/list_movies.json?sort_by=like_count`);
+    fetchMovies(`https://yts.mx/api/v2/list_movies.json?sort_by=like_count&page=${movieSearchParam.get('page')}`);
     // TODO: add page=1 to the url when the first time page loads
 }
 if (movieSearchParam.has('query') && movieSearchParam.get('query') != '') {
